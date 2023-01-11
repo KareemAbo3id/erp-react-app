@@ -7,17 +7,16 @@ import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
+import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import CloseIcon from '@mui/icons-material/Close';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import { Link } from 'react-router-dom';
-import { routersLinks } from '../../Routes/routers';
+import { routersLinks, userOptions } from '../../Routes/routers';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Button, Divider, Menu, MenuItem } from '@mui/material';
 
 const drawerWidth = 280;
-const userOptions = ['Setting', 'Logout'];
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: prop => prop !== 'open',
@@ -91,7 +90,7 @@ export default function MainNavBar(props) {
         {routersLinks.map(link => (
           <Link
             key={link.text.toString().toLocaleLowerCase()}
-            to={link.text.toString().toLocaleLowerCase()}
+            to={'../' + link.text.toString().toLocaleLowerCase()}
             style={{ textDecoration: 'none', color: 'inherit' }}
             onClick={toggleDrawer(anchor, false)}
             onKeyDown={toggleDrawer(anchor, false)}
@@ -111,19 +110,14 @@ export default function MainNavBar(props) {
 
   return (
     <AppBar position="fixed">
-      <Toolbar>
+      <Toolbar sx={{ alignItems: 'center' }}>
         {/* MENU ICON */}
         <Box sx={{ flexGrow: 0 }}>
           <div>
             {['left'].map(anchor => (
               <div key={anchor}>
-                <IconButton
-                  color="inherit"
-                  onClick={toggleDrawer(anchor, true)}
-                  edge="start"
-                  sx={{ marginRight: '0.5rem' }}
-                >
-                  <MenuIcon fontSize="medium" />
+                <IconButton color="inherit" onClick={toggleDrawer(anchor, true)} component="div" edge="start">
+                  <MenuRoundedIcon sx={{ fontSize: '1.8rem' }} />
                 </IconButton>
                 <Drawer anchor={anchor} open={sideNavOpen[anchor]} onClose={toggleDrawer(anchor, false)}>
                   {list(anchor)}
@@ -134,29 +128,30 @@ export default function MainNavBar(props) {
         </Box>
         {/* ==================================== */}
         {/* BRAND */}
-        <Box sx={{ flexGrow: 1 }}>
-          <div>
-            <Typography variant="h6" noWrap component="div">
-              {props.navBarTitle}
-            </Typography>
-          </div>
-        </Box>
-        {/* ==================================== */}
+        <Box sx={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>{props.brand}</Box>
+        {/* ====================================
         {/* USER */}
         <Box sx={{ flexGrow: 0 }}>
           <Button
-            variant="outlined"
-            sx={{ color: '#eee', textTransform: 'none' }}
-            component="span"
             onClick={handleOpenUserMenu}
+            sx={{
+              color: '#f1f1f1',
+              textTransform: 'none',
+              display: 'flex',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              gap: '0.2rem',
+              border: '1px solid #1565c0',
+            }}
+            component="div"
           >
-            <IconButton size="small" sx={{ color: '#eee' }}>
-              <AccountCircleIcon fontSize="small" />
-            </IconButton>
-            <Typography variant="caption">{props.userName}</Typography>
+            <AccountCircleIcon sx={{ color: 'inherit', marginBottom: '0.2rem' }} />
+            <Typography variant="body2" component="div" fontWeight="100">
+              {props.userName}
+            </Typography>
           </Button>
           <Menu
-            sx={{ mt: '35px' }}
+            sx={{ mt: '36px' }}
             id="menu-appbar"
             anchorEl={anchorElUser}
             anchorOrigin={{
@@ -171,10 +166,36 @@ export default function MainNavBar(props) {
             open={Boolean(anchorElUser)}
             onClose={handleCloseUserMenu}
           >
+            <Typography
+              variant="subtitle2"
+              sx={{ color: '#9e9e9e', padding: '0.5rem 1rem' }}
+              fontWeight="300"
+              textAlign="left"
+              component="div"
+            >
+              Logged-in as: <b>{props.userName}</b>
+            </Typography>
+            <Divider variant="middle" flexItem />
             {userOptions.map(option => (
-              <MenuItem key={option} onClick={handleCloseUserMenu}>
-                <Typography textAlign="center">{option}</Typography>
-              </MenuItem>
+              <Link
+                key={option.text.toString().toLocaleLowerCase()}
+                to={'../' + option.text.toString().toLocaleLowerCase()}
+                style={{ textDecoration: 'none', color: 'inherit' }}
+              >
+                <MenuItem key={option.text} onClick={handleCloseUserMenu}>
+                  <Typography
+                    component="div"
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'flex-start',
+                      alignItems: 'center',
+                      gap: '0.2rem',
+                    }}
+                  >
+                    {option.icon} {option.text}
+                  </Typography>
+                </MenuItem>
+              </Link>
             ))}
           </Menu>
         </Box>
